@@ -1,0 +1,63 @@
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans
+from sklearn import preprocessing
+from sklearn.mixture import GaussianMixture
+
+
+names = ['Sepal_Length','Sepal_Width','Petal_Length','Petal_Width','Class']
+dataset = pd.read_csv("C:/PC items/7th Sem notes/AI ML lab/8dataset.csv", names=names)
+X = dataset.iloc[:, :-1]  
+label = {'Iris-setosa': 0,'Iris-versicolor': 1, 'Iris-virginica': 2} 
+y = [label[c] for c in dataset.iloc[:, -1]]
+print("X=\n",X)
+print("\n y=",y)
+
+
+
+# Build the K Means Model
+model = KMeans(n_clusters=3)
+model.fit(X) # model.labels_ : Gives cluster no for which samples belongs to
+
+# # Visualise the clustering results
+plt.figure(figsize=(14,14))
+colormap = np.array(['red', 'lime', 'black'])
+
+# Plot the Original Classifications using Petal features
+plt.subplot(2, 2, 1)
+plt.scatter(X.Petal_Length, X.Petal_Width, c=colormap[y], s=40)
+plt.title('Real Clusters')
+plt.xlabel('Petal Length')
+plt.ylabel('Petal Width')
+# Plot the Models Classifications
+
+plt.subplot(2, 2, 2)
+plt.scatter(X.Petal_Length, X.Petal_Width, c=colormap[model.labels_], s=40)
+plt.title('K-Means Clustering')
+plt.xlabel('Petal Length')
+plt.ylabel('Petal Width')
+
+# General EM for GMM
+
+# transform your data such that its distribution will have a
+# mean value 0 and standard deviation of 1.
+scaler = preprocessing.StandardScaler()
+scaler.fit(X)
+xsa = scaler.transform(X)
+xs = pd.DataFrame(xsa, columns = X.columns)
+
+
+gmm = GaussianMixture(n_components=3)
+gmm.fit(xs)
+gmm_y = gmm.predict(xs)
+
+
+plt.subplot(2, 2, 3)
+plt.scatter(X.Petal_Length, X.Petal_Width, c=colormap[gmm_y], s=40)
+plt.title('GMM Clustering')
+plt.xlabel('Petal Length')
+plt.ylabel('Petal Width')
+
+print('\n \n Observation: The GMM using EM algorithm based clustering matched the true labels more closely than the Kmeans.')
