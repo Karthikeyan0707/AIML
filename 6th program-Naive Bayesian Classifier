@@ -1,0 +1,31 @@
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import GaussianNB
+
+data=pd.DataFrame(data=pd.read_csv("C:/PC items/7th Sem notes/AI ML lab/naivedata.csv"))
+
+concept=np.array(data.iloc[:,0:-1])
+target=np.array(data.iloc[:,-1])
+
+x_train,x_test,y_train,y_test=train_test_split(concept,target,test_size=0.33)
+print("\n Size of dataset is:",len(data))
+print("\n The dataset splitting into training and testing\n")
+print("\n The total number of Train data:",y_train.shape[0])
+print("\n The total number of Test data:",y_test.shape[0])
+
+print("\n first 5 rows of training set:")
+for i in range(5):
+    print(x_train[i]+y_train[i])
+print("\n first 5 rows of testing set:")
+for i in range(5):
+    print(x_test[i]+y_test[i])
+    
+    
+clf=GaussianNB()
+clf.fit(x_train,y_train)
+y_pred=clf.predict(x_test)
+
+print("\n prediction are:")
+print(y_pred)
+print("\n Accuracy of the classifier is:",clf.score(x_test,y_test)*100)
